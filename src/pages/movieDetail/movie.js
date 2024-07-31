@@ -1,27 +1,30 @@
 
-import React, {useEffect, useState} from "react"
+import React, {useEffect, useState, useCallback} from "react"
 import "./movie.css"
 import { useParams } from "react-router-dom"
 
 const Movie = () => {
-    const [currentMovieDetail, setMovie] = useState()
-    const { id } = useParams()
+    const [currentMovieDetail, setMovie] = useState(null);
+    const { id } = useParams();
+
+    // Memoize getData with useCallback
+    const getData = useCallback(() => {
+        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=4e44d9029b1270a757cddc766a1bcb63&language=en-US`)
+            .then(res => res.json())
+            .then(data => setMovie(data));
+    }, [id]);
 
     useEffect(() => {
-        getData()
-        window.scrollTo(0,0)
-    }, [getData])
+        getData();
+        window.scrollTo(0, 0);
+    }, [getData]);
 
-    const getData = () => {
-        fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=4e44d9029b1270a757cddc766a1bcb63&language=en-US`)
-        .then(res => res.json())
-        .then(data => setMovie(data))
-    }
+   
 
     return (
         <div className="movie">
             <div className="movie__intro">
-                <img className="movie__backdrop" src={`https://image.tmdb.org/t/p/original${currentMovieDetail ? currentMovieDetail.backdrop_path : ""}`} />
+                <img className="movie__backdrop" src={`https://image.tmdb.org/t/p/original${currentMovieDetail ? currentMovieDetail.backdrop_path : ""}` } alt="1" />
             </div>
             <div className="movie__detail">
                 <div className="movie__detailLeft">
